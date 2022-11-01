@@ -10,3 +10,6 @@ elif n < 0:
     print(c)
 else:
     print(1)
+'''
+https://acmp.ru/index.asp?main=task&id_task=2
+'''
