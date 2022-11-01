@@ -1,5 +1,0 @@
-a, b, c = input().split()
-a = int(a)
-b = int(b)
-c = int(c)
-print(a + (c - 1) * (b - a))
