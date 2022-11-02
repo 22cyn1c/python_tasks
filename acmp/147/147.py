@@ -12,3 +12,6 @@ else:
         t = b
         c += 1
     print(b)
+"""
+https://acmp.ru/index.asp?main=task&id_task=147
+"""
