@@ -9,3 +9,6 @@ if a[0] == 'B' or a[0] == 'D' or a[0] == 'F' or a[0] == 'H':
         print('BLACK')
     else:
         print('WHITE')
+'''
+https://acmp.ru/index.asp?main=task&id_task=62
+'''
