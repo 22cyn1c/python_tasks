@@ -16,3 +16,6 @@ for i in range(a + 1):
                     t = i
         b = 0
 print(t)
+"""
+https://acmp.ru/index.asp?main=task&id_task=47
+"""
