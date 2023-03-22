@@ -1,3 +1,6 @@
+"""
+https://acmp.ru/index.asp?main=task&id_task=163
+"""
 a = input()
 if a[1] == '-':
     if a[0] == 'x':
