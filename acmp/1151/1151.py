@@ -1,3 +1,6 @@
+"""
+https://acmp.ru/asp/do/index.asp?main=task&id_course=2&id_section=18&id_topic=41&id_problem=268
+"""
 a = 'qwertyuiopasdfghjklzxcvbnm'
 b = 'QWERTYUIOPASDFGHJKLZXCVBNM'
 c = '12345678890'
