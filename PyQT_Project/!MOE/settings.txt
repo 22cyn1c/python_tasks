@@ -1,0 +1,9 @@
+l=russian
+t=auto
+q=q.mp3
+w=2.mp3
+e=3.mp3
+a=a.mp3
+s=5.mp3
+d=d.mp3
+f=1
