@@ -1,5 +1,7 @@
 import sys, qdarktheme, os, sqlite3
 from sys import argv, executable
+
+# создаю глобальные переменные которые понадобятся после
 global language
 global theme
 global q
@@ -9,18 +11,19 @@ global a
 global s
 global d
 global f
+global im1
+global im2
+global im3
+global im4
 from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QTabWidget, QWidget, QRadioButton, QButtonGroup, \
     QLabel, QLineEdit, QSlider, QDialog, QTableWidget, QTableWidgetItem
-from PyQt5 import QtCore
 from PyQt5.QtCore import QUrl
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.Qt import Qt
-from PIL import Image
-
-template = ""
 
 
+# создаю общий класс
 class Keyboard(QMainWindow):
     def __init__(self):
         global language
@@ -34,8 +37,8 @@ class Keyboard(QMainWindow):
         global f
 
         super().__init__()
-        self.f = True
 
+        # загружаю данные из файла settings.txt в глобальные переменные, в случае отсутствия, создаю файл
         for i in range(2):
             try:
                 settings_file = open('settings.txt', mode='r+', encoding="utf8")
@@ -83,21 +86,25 @@ class Keyboard(QMainWindow):
                 tmp.close()
                 continue
 
+            # создаю вкладки
             self.tabs = QTabWidget()
             self.tabs.setFixedSize(300, 200)
             self.tabs.showNormal()
 
+            # выбираю их язык в зависимости от значения переменной
             if language == 'english':
+                self.tabs.setWindowTitle('Sound keyboard')
                 self.tabs.addTab(SoundKeyboard(), 'Sound keyboard')
                 self.tabs.addTab(Settings(), 'Settings')
 
             else:
-
+                self.tabs.setWindowTitle('Звуковая клавиатура')
                 self.tabs.addTab(SoundKeyboard(), 'Звуковая клавиатура')
                 self.tabs.addTab(Settings(), 'Настройки')
 
             qdarktheme.enable_hi_dpi()
 
+            # создаю базу данных которая понадобится после
             self.a = open('sql.db', 'a', encoding="utf8")
             self.a.close()
 
@@ -123,9 +130,8 @@ class Keyboard(QMainWindow):
                 connection.close()
 
 
+# настраиваю первую вкладку - Настройки
 class Settings(QWidget):
-    rlTabChanged = QtCore.pyqtSignal()
-    elTabChanged = QtCore.pyqtSignal()
 
     def __init__(self):
         global language
@@ -133,6 +139,7 @@ class Settings(QWidget):
 
         super().__init__()
 
+        # создаю оформление смены темы - Строки, Кнопки
         self.theme_change = QLabel(self)
         self.theme_change.move(20, 20)
         self.theme_change.resize(50, 15)
@@ -149,6 +156,7 @@ class Settings(QWidget):
         self.sync_with_desktop.move(20, 110)
         self.sync_with_desktop.resize(100, 30)
 
+        # даю значения виджетам по языкам, в зависимости от глобальной переменной
         if language == 'english':
             self.dark_theme.setText('Dark theme')
             self.light_theme.setText('Light theme')
@@ -161,10 +169,12 @@ class Settings(QWidget):
             self.sync_with_desktop.setText('Тема системы')
             self.theme_change.setText('Тема')
 
+        # присваиваю кнопкам функцию
         self.dark_theme.toggled.connect(self.dark)
         self.light_theme.toggled.connect(self.light)
         self.sync_with_desktop.toggled.connect(self.synchronization)
 
+        # нажимаю на кнопку при соответсвии с глобальной переменной
         if theme == 'auto':
             self.sync_with_desktop.toggle()
 
@@ -174,6 +184,7 @@ class Settings(QWidget):
         else:
             self.light_theme.toggle()
 
+        # создаю оформление смены языков - Строки, Кнопки, даю им функции
         self.language_change = QLabel(self)
         self.language_change.resize(55, 16)
         self.language_change.move(150, 20)
@@ -192,6 +203,7 @@ class Settings(QWidget):
         self.english.setAutoExclusive(True)
 
         self.change_language = QPushButton(self)
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.change_language.setText('Change language')
         else:
@@ -204,6 +216,7 @@ class Settings(QWidget):
         self.language_group.addButton(self.english)
         self.language_group.addButton(self.russian)
 
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.english.toggle()
             self.language_change.setText('Language')
@@ -222,8 +235,10 @@ class Settings(QWidget):
         global d
         global f
 
+        # меняю тему и значение глобальной переменной
         qdarktheme.setup_theme("light")
         theme = 'light'
+        # переписываю значения в файле settings.txt
         clean = open('settings.txt', 'w+')
         clean.seek(0)
         clean.close()
@@ -249,8 +264,10 @@ class Settings(QWidget):
         global d
         global f
 
+        # меняю тему и значение глобальной переменной
         qdarktheme.setup_theme("dark")
         theme = 'dark'
+        # переписываю значения в файле settings.txt
         clean = open('settings.txt', 'w+')
         clean.seek(0)
         clean.close()
@@ -276,8 +293,10 @@ class Settings(QWidget):
         global d
         global f
 
+        # меняю тему и значение глобальной переменной
         qdarktheme.setup_theme("auto")
         theme = 'auto'
+        # переписываю значения в файле settings.txt
         clean = open('settings.txt', 'w+')
         clean.seek(0)
         clean.close()
@@ -304,6 +323,7 @@ class Settings(QWidget):
         global d
         global f
 
+        # меняю язык всей вкладки и значение переменной
         self.dark_theme.setText('Тёмная тема')
         self.light_theme.setText('Светлая тема')
         self.sync_with_desktop.setText('Тема системы')
@@ -311,6 +331,7 @@ class Settings(QWidget):
         self.theme_change.setText('Тема')
         self.change_language.setText('Смена языка')
         language = 'russian'
+        # переписываю значения в файле settings.txt
         clean = open('settings.txt', 'w+')
         clean.seek(0)
         clean.close()
@@ -336,14 +357,16 @@ class Settings(QWidget):
         global s
         global d
         global f
+
+        # меняю язык всей вкладки и значение переменной
         self.dark_theme.setText('Dark theme')
         self.light_theme.setText('Light theme')
         self.sync_with_desktop.setText('System theme')
         self.language_change.setText('Language')
         self.theme_change.setText('Theme')
         self.change_language.setText('Change language')
-        # self.nameTabChanged.emit('Sound keyboard')
         language = 'english'
+        # переписываю значения в файле settings.txt
         clean = open('settings.txt', 'w+')
         clean.seek(0)
         clean.close()
@@ -360,20 +383,25 @@ class Settings(QWidget):
             settings_file.write(f'f={f}')
 
     def restart1(self):
+        # задаю перезапуск программы в случа нажатия на кнопку, для СМЕНЫ ЯЗЫКА во всей программе
         os.execl(executable, os.path.abspath(__file__), *argv)
 
 
+# диалог для клавиши Q
 class QKeyDialog(QDialog):
-
     def __init__(self, parent):
         global q
         super().__init__(parent)
         global language
         self.setFixedSize(225, 50)
+        # создаю виджеты и даю им функции
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.label_nameofsound = QLabel('Sound file', self)
+            self.setWindowTitle('Sound keyboard')
         else:
             self.label_nameofsound = QLabel('Файл звука', self)
+            self.setWindowTitle('Звуковая клавиатура')
         self.label_nameofsound.move(5, 15)
         self.line_nameofsound = QLineEdit(q, self)
         self.line_nameofsound.move(75, 12)
@@ -394,6 +422,7 @@ class QKeyDialog(QDialog):
         global s
         global d
         global f
+        # меняю значение переменной и переписываю значения в файле settings.txt
         q = self.line_nameofsound.text()
         clean = open('settings.txt', 'w+')
         clean.seek(0)
@@ -411,16 +440,21 @@ class QKeyDialog(QDialog):
             settings_file.write(f'f={f}')
 
 
+# диалог для клавиши w
 class WKeyDialog(QDialog):
     def __init__(self, parent):
         global w
         super().__init__(parent)
         global language
         self.setFixedSize(225, 50)
+        # создаю виджеты и даю им функции
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.label_nameofsound = QLabel('Sound file', self)
+            self.setWindowTitle('Sound keyboard')
         else:
             self.label_nameofsound = QLabel('Файл звука', self)
+            self.setWindowTitle('Звуковая клавиатура')
         self.label_nameofsound.move(5, 15)
         self.line_nameofsound = QLineEdit(w, self)
         self.line_nameofsound.move(75, 12)
@@ -441,6 +475,7 @@ class WKeyDialog(QDialog):
         global s
         global d
         global f
+        # меняю значение переменной и переписываю значения в файле settings.txt
         w = self.line_nameofsound.text()
         clean = open('settings.txt', 'w+')
         clean.seek(0)
@@ -458,16 +493,21 @@ class WKeyDialog(QDialog):
             settings_file.write(f'f={f}')
 
 
+# диалог для клавиши e
 class EKeyDialog(QDialog):
     def __init__(self, parent):
         global e
         super().__init__(parent)
         global language
         self.setFixedSize(225, 50)
+        # создаю виджеты и даю им функции
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.label_nameofsound = QLabel('Sound file', self)
+            self.setWindowTitle('Sound keyboard')
         else:
             self.label_nameofsound = QLabel('Файл звука', self)
+            self.setWindowTitle('Звуковая клавиатура')
         self.label_nameofsound.move(5, 15)
         self.line_nameofsound = QLineEdit(e, self)
         self.line_nameofsound.move(75, 12)
@@ -488,6 +528,7 @@ class EKeyDialog(QDialog):
         global s
         global d
         global f
+        # меняю значение переменной и переписываю значения в файле settings.txt
         e = self.line_nameofsound.text()
         clean = open('settings.txt', 'w+')
         clean.seek(0)
@@ -505,16 +546,21 @@ class EKeyDialog(QDialog):
             settings_file.write(f'f={f}')
 
 
+# диалог для клавиши A
 class AKeyDialog(QDialog):
     def __init__(self, parent):
         super().__init__(parent)
         global a
         global language
         self.setFixedSize(225, 50)
+        # создаю виджеты и даю им функции
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.label_nameofsound = QLabel('Sound file', self)
+            self.setWindowTitle('Sound keyboard')
         else:
             self.label_nameofsound = QLabel('Файл звука', self)
+            self.setWindowTitle('Звуковая клавиатура')
         self.label_nameofsound.move(5, 15)
         self.line_nameofsound = QLineEdit(a, self)
         self.line_nameofsound.move(75, 12)
@@ -535,6 +581,7 @@ class AKeyDialog(QDialog):
         global s
         global d
         global f
+        # меняю значение переменной и переписываю значения в файле settings.txt
         a = self.line_nameofsound.text()
         clean = open('settings.txt', 'w+')
         clean.seek(0)
@@ -552,16 +599,21 @@ class AKeyDialog(QDialog):
             settings_file.write(f'f={f}')
 
 
+# диалог для клавиши s
 class SKeyDialog(QDialog):
     def __init__(self, parent):
         global s
         super().__init__(parent)
         global language
         self.setFixedSize(225, 50)
+        # создаю виджеты и даю им функции
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.label_nameofsound = QLabel('Sound file', self)
+            self.setWindowTitle('Sound keyboard')
         else:
             self.label_nameofsound = QLabel('Файл звука', self)
+            self.setWindowTitle('Звуковая клавиатура')
         self.label_nameofsound.move(5, 15)
         self.line_nameofsound = QLineEdit(s, self)
         self.line_nameofsound.move(75, 12)
@@ -582,6 +634,7 @@ class SKeyDialog(QDialog):
         global s
         global d
         global f
+        # меняю значение переменной и переписываю значения в файле settings.txt
         s = self.line_nameofsound.text()
         clean = open('settings.txt', 'w+')
         clean.seek(0)
@@ -599,16 +652,21 @@ class SKeyDialog(QDialog):
             settings_file.write(f'f={f}')
 
 
+# диалог для клавиши d
 class DKeyDialog(QDialog):
     def __init__(self, parent):
         global d
         super().__init__(parent)
         global language
         self.setFixedSize(225, 50)
+        # создаю виджеты и даю им функции
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.label_nameofsound = QLabel('Sound file', self)
+            self.setWindowTitle('Sound keyboard')
         else:
             self.label_nameofsound = QLabel('Файл звука', self)
+            self.setWindowTitle('Звуковая клавиатура')
         self.label_nameofsound.move(5, 15)
         self.line_nameofsound = QLineEdit(d, self)
         self.line_nameofsound.move(75, 12)
@@ -629,6 +687,7 @@ class DKeyDialog(QDialog):
         global s
         global d
         global f
+        # меняю значение переменной и переписываю значения в файл settings.txt
         d = self.line_nameofsound.text()
         clean = open('settings.txt', 'w+')
         clean.seek(0)
@@ -646,6 +705,7 @@ class DKeyDialog(QDialog):
             settings_file.write(f'f={f}')
 
 
+# диалог для базы данных
 class DataBase(QDialog):
     def __init__(self, parent):
         global language
@@ -659,16 +719,21 @@ class DataBase(QDialog):
         global f
         super().__init__(parent)
         self.setFixedSize(222, 240)
+        # создаю виджеты и даю им функции
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.button_table = QPushButton('Save data', self)
+            self.setWindowTitle('Sound keyboard')
         else:
             self.button_table = QPushButton('Сохранить данные', self)
+            self.setWindowTitle('Звуковая клавиатура')
         self.button_table.move(10, 210)
         self.button_table.resize(200, 25)
         self.table_sounds = QTableWidget(self)
         self.table_sounds.setFixedSize(250, 205)
         self.table_sounds.setColumnCount(2)
         self.table_sounds.setRowCount(6)
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.table_sounds.setHorizontalHeaderLabels(["Key", "Sound file"])
         else:
@@ -705,6 +770,7 @@ class DataBase(QDialog):
         global s
         global d
         global f
+        # меняю значения переменных и переписываю значения в файле settings.txt
         q = self.table_sounds.item(0, 1).text()
         w = self.table_sounds.item(1, 1).text()
         e = self.table_sounds.item(2, 1).text()
@@ -726,10 +792,10 @@ class DataBase(QDialog):
             settings_file.write(f'd={d}\n')
             settings_file.write(f'f={f}')
 
+        # передаю значения в базу данных
         connection = sqlite3.connect('sql.db')
         cursor = connection.cursor()
 
-        # Выбираем всех пользователей
         cursor.execute('UPDATE sqlsound SET namefile = ? WHERE button = ?', (q, 'Q'))
         cursor.execute('UPDATE sqlsound SET namefile = ? WHERE button = ?', (w, 'W'))
         cursor.execute('UPDATE sqlsound SET namefile = ? WHERE button = ?', (e, 'E'))
@@ -741,6 +807,7 @@ class DataBase(QDialog):
         connection.close()
 
 
+# 2-ая вкладка - Звуковая клавиатура
 class SoundKeyboard(QWidget):
     def __init__(self):
         global language
@@ -748,6 +815,7 @@ class SoundKeyboard(QWidget):
 
         super().__init__()
 
+        # задаю текст вкладки в зависимости от языка
         if language == 'english':
             self.label_panel = QLabel(self)
             self.label_panel.move(20, 25)
@@ -757,6 +825,7 @@ class SoundKeyboard(QWidget):
             self.label_panel.move(20, 25)
             self.label_panel.setText('Звуковая панель')
 
+        # создаю виджеты и даю им функции
         self.panel_button1 = QPushButton(self)
         self.panel_button1.move(20, 60)
         self.panel_button1.resize(35, 35)
@@ -806,6 +875,7 @@ class SoundKeyboard(QWidget):
         self.volume_slider.setMaximum(100)
         self.volume_slider.valueChanged.connect(self.volume_changed)
 
+        # задаю текст виджетов в зависимости от языка
         if language == 'english':
             self.label_volume = QLabel('Volume', self)
             self.label_volume.move(175, 25)
@@ -833,6 +903,7 @@ class SoundKeyboard(QWidget):
             self.database_button.setText("База данных")
             self.database_button.clicked.connect(self.databasebuttonconnect)
 
+        # создаю так называемые плееры, с помощью которых будет воспроизводится звук
         self.playerq = QMediaPlayer(self)
         self.playere = QMediaPlayer(self)
         self.playerw = QMediaPlayer(self)
@@ -840,11 +911,13 @@ class SoundKeyboard(QWidget):
         self.players = QMediaPlayer(self)
         self.playerd = QMediaPlayer(self)
 
+        # создаю картинку
         self.label_im = QLabel(self)
         self.label_im.move(235, 20)
         self.pm = QPixmap('im4.png')
         self.label_im.setPixmap(self.pm)
 
+    # указываю каждой кнопке свой диалог
     def buttonconnectQ(self):
         self.keywidgetq = QKeyDialog(self)
         self.keywidgetq.show()
@@ -873,6 +946,7 @@ class SoundKeyboard(QWidget):
         self.dbbutton = DataBase(self)
         self.dbbutton.show()
 
+    # меняю картинку и громкость воспроизведения в зависимости от значения слайдера
     def volume_changed(self, value):
         if value >= 66:
             self.pm = QPixmap('im4.png')
@@ -894,6 +968,7 @@ class SoundKeyboard(QWidget):
         self.players.setVolume(value)
         self.playerd.setVolume(value)
 
+    # создаю функцию, которая воспроизводит звук, при нажатии на определенную клавишу
     def keyPressEvent(self, ev):
         global q
         global w
@@ -948,3 +1023,4 @@ if __name__ == '__main__':
     form = Keyboard()
     sys.excepthook = except_hook
     sys.exit(app.exec())
+# конец
