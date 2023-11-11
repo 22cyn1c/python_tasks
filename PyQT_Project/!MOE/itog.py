@@ -2,6 +2,12 @@ import sys, qdarktheme, os, sqlite3
 from sys import argv, executable
 
 # создаю глобальные переменные которые понадобятся после
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QTabWidget, QWidget, QRadioButton, QButtonGroup, \
+    QLabel, QLineEdit, QSlider, QDialog, QTableWidget, QTableWidgetItem
+from PyQt5.QtCore import QUrl
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtGui import QFont, QPixmap
+from PyQt5.Qt import Qt
 global language
 global theme
 global q
@@ -15,12 +21,6 @@ global im1
 global im2
 global im3
 global im4
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QTabWidget, QWidget, QRadioButton, QButtonGroup, \
-    QLabel, QLineEdit, QSlider, QDialog, QTableWidget, QTableWidgetItem
-from PyQt5.QtCore import QUrl
-from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
-from PyQt5.QtGui import QFont, QPixmap
-from PyQt5.Qt import Qt
 
 
 # создаю общий класс
